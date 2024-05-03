@@ -188,16 +188,9 @@ public final class Enchantments {
         ENCHANTMENTS.put("lure", Enchantment.LURE);
         ALIASENCHANTMENTS.put("rodlure", Enchantment.LURE);
 
-        // 1.8
-        try {
-            final Enchantment depthStrider = Enchantment.getByName("DEPTH_STRIDER");
-            if (depthStrider != null) {
-                ENCHANTMENTS.put("depthstrider", depthStrider);
-                ALIASENCHANTMENTS.put("depth", depthStrider);
-                ALIASENCHANTMENTS.put("strider", depthStrider);
-            }
-        } catch (final IllegalArgumentException ignored) {
-        }
+        ENCHANTMENTS.put("depthstrider", Enchantment.DEPTH_STRIDER);
+        ALIASENCHANTMENTS.put("depth", Enchantment.DEPTH_STRIDER);
+        ALIASENCHANTMENTS.put("strider", Enchantment.DEPTH_STRIDER);
 
         // 1.9
         try {

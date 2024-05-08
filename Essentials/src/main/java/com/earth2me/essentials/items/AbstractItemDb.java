@@ -8,7 +8,6 @@ import com.earth2me.essentials.utils.MaterialUtil;
 import com.earth2me.essentials.utils.VersionUtil;
 import net.ess3.api.IEssentials;
 import net.ess3.api.PluginKey;
-import net.ess3.provider.PotionMetaProvider;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
@@ -25,7 +24,6 @@ import org.bukkit.inventory.meta.FireworkEffectMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
@@ -285,17 +283,8 @@ public abstract class AbstractItemDb implements IConf, net.ess3.api.IItemDb {
                 serializeEffectMeta(sb, fireworkEffectMeta.getEffect());
             }
         } else if (MaterialUtil.isPotion(material)) {
-            final boolean splash;
-            final Collection<PotionEffect> effects;
-            if (VersionUtil.PRE_FLATTENING) {
-                final PotionMetaProvider.AbstractPotionData potionData = ess.getPotionMetaProvider().getPotionData(is);
-
-                splash = potionData.isSplash();
-                effects = potionData.getEffects();
-            } else {
-                splash = is.getType() == Material.SPLASH_POTION;
-                effects = ((PotionMeta) is.getItemMeta()).getCustomEffects();
-            }
+            final boolean splash = ess.getPotionMetaProvider().isSplashPotion(is);
+            final Collection<PotionEffect> effects = ess.getPotionMetaProvider().getCustomEffects(is);
 
             for (final PotionEffect e : effects) {
                 // long but needs to be effect:speed power:2 duration:120 in that order.

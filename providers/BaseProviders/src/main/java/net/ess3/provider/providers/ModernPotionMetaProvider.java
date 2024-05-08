@@ -16,48 +16,79 @@ public class ModernPotionMetaProvider implements PotionMetaProvider {
     }
 
     @Override
-    public AbstractPotionData getPotionData(ItemStack stack) {
-        return new AbstractPotionData() {
-            @Override
-            public boolean isSplash() {
-                return stack.getType() == Material.SPLASH_POTION;
-            }
+    public void setBasePotionType(final ItemStack stack, PotionType type, final boolean extended, final boolean upgraded) {
+        if (stack == null) {
+            throw new IllegalArgumentException("ItemStack cannot be null");
+        }
 
-            @Override
-            public Collection<PotionEffect> getEffects() {
-                return ((PotionMeta) stack.getItemMeta()).getCustomEffects();
-            }
+        if (extended && upgraded) {
+            throw new IllegalArgumentException("Potion cannot be both extended and upgraded");
+        }
 
-            @Override
-            public PotionType getType() {
-                return ((PotionMeta) stack.getItemMeta()).getBasePotionType();
-            }
+        final String name = type.name();
+        if (name.startsWith("LONG_")) {
+            type = PotionType.valueOf(name.substring(5));
+        } else if (name.startsWith("STRONG_")) {
+            type = PotionType.valueOf(name.substring(7));
+        }
 
-            @Override
-            public void setType(final PotionType type) {
-                ((PotionMeta) stack.getItemMeta()).setBasePotionType(type);
-            }
+        if (extended && type.isExtendable()) {
+            type = PotionType.valueOf("LONG_" + type.name());
+        }
 
-            @Override
-            public int hashCode() {
-                return stack.getItemMeta().hashCode();
-            }
-        };
+        if (upgraded && type.isUpgradeable()) {
+            type = PotionType.valueOf("STRONG_" + type.name());
+        }
+
+        final PotionMeta meta = (PotionMeta) stack.getItemMeta();
+        //noinspection DataFlowIssue
+        meta.setBasePotionType(type);
+        stack.setItemMeta(meta);
     }
 
     @Override
-    public void updatePotionStack(ItemStack stack, AbstractPotionData data) {
+    public Collection<PotionEffect> getCustomEffects(ItemStack stack) {
         final PotionMeta meta = (PotionMeta) stack.getItemMeta();
-        meta.setBasePotionType(data.getType());
-        meta.clearCustomEffects();
-        for (PotionEffect effect : data.getEffects()) {
-            meta.addCustomEffect(effect, true);
-        }
-        stack.setItemMeta(meta);
+        //noinspection DataFlowIssue
+        return meta.getCustomEffects();
+    }
 
-        final AbstractPotionData existing = getPotionData(stack);
-        if (existing.isSplash() != data.isSplash()) {
-            stack.setType(data.isSplash() ? Material.SPLASH_POTION : Material.POTION);
+    @Override
+    public boolean isSplashPotion(ItemStack stack) {
+        return stack != null && stack.getType() == Material.SPLASH_POTION;
+    }
+
+    @Override
+    public boolean isExtended(ItemStack stack) {
+        final PotionMeta meta = (PotionMeta) stack.getItemMeta();
+        //noinspection DataFlowIssue
+        return meta.getBasePotionType().name().startsWith("LONG_");
+    }
+
+    @Override
+    public boolean isUpgraded(ItemStack stack) {
+        final PotionMeta meta = (PotionMeta) stack.getItemMeta();
+        //noinspection DataFlowIssue
+        return meta.getBasePotionType().name().startsWith("STRONG_");
+    }
+
+    @Override
+    public PotionType getBasePotionType(ItemStack stack) {
+        final PotionMeta meta = (PotionMeta) stack.getItemMeta();
+        //noinspection DataFlowIssue
+        return meta.getBasePotionType();
+    }
+
+    @Override
+    public void setSplashPotion(ItemStack stack, boolean isSplash) {
+        if (stack == null) {
+            throw new IllegalArgumentException("ItemStack cannot be null");
+        }
+
+        if (isSplash && stack.getType() == Material.POTION) {
+            stack.setType(Material.SPLASH_POTION);
+        } else if (!isSplash && stack.getType() == Material.SPLASH_POTION) {
+            stack.setType(Material.POTION);
         }
     }
 

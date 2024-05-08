@@ -5,7 +5,6 @@ import net.ess3.provider.PotionMetaProvider;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
@@ -68,43 +67,64 @@ public class LegacyPotionMetaProvider implements PotionMetaProvider {
     }
 
     @Override
-    public AbstractPotionData getPotionData(ItemStack stack) {
-        return new AbstractPotionData() {
-            final Potion potion = Potion.fromDamage(stack.getDurability());
+    public void setSplashPotion(final ItemStack stack, final boolean isSplash) {
+        if (stack == null) {
+            throw new IllegalArgumentException("ItemStack cannot be null");
+        }
 
-            @Override
-            public boolean isSplash() {
-                return potion.isSplash();
-            }
-
-            @Override
-            public Collection<PotionEffect> getEffects() {
-                return potion.getEffects();
-            }
-
-            @Override
-            public PotionType getType() {
-                return ((PotionMeta) stack.getItemMeta()).getBasePotionData().getType();
-            }
-
-            @Override
-            public void setType(PotionType type) {
-                final PotionMeta itemMeta = (PotionMeta) stack.getItemMeta();
-                final PotionData data = itemMeta.getBasePotionData();
-                itemMeta.setBasePotionData(new PotionData(type, data.isExtended(), data.isUpgraded()));
-                stack.setItemMeta(itemMeta);
-            }
-
-            @Override
-            public int hashCode() {
-                return (31 * stack.getType().hashCode()) ^ ((PotionMeta) stack.getItemMeta()).getBasePotionData().hashCode();
-            }
-        };
+        if (isSplash && stack.getType() == Material.POTION) {
+            stack.setType(Material.SPLASH_POTION);
+        } else if (!isSplash && stack.getType() == Material.SPLASH_POTION) {
+            stack.setType(Material.POTION);
+        }
     }
 
     @Override
-    public void updatePotionStack(ItemStack stack, AbstractPotionData data) {
-        //todo
+    public boolean isSplashPotion(final ItemStack stack) {
+        return stack != null && stack.getType() == Material.SPLASH_POTION;
+    }
+
+    @Override
+    public Collection<PotionEffect> getCustomEffects(final ItemStack stack) {
+        final PotionMeta meta = (PotionMeta) stack.getItemMeta();
+        return meta.getCustomEffects();
+    }
+
+    @Override
+    public boolean isExtended(final ItemStack stack) {
+        final PotionMeta meta = (PotionMeta) stack.getItemMeta();
+        final PotionData data = meta.getBasePotionData();
+        return data.isExtended();
+    }
+
+    @Override
+    public boolean isUpgraded(final ItemStack stack) {
+        final PotionMeta meta = (PotionMeta) stack.getItemMeta();
+        final PotionData data = meta.getBasePotionData();
+        return data.isUpgraded();
+    }
+
+    @Override
+    public PotionType getBasePotionType(final ItemStack stack) {
+        final PotionMeta meta = (PotionMeta) stack.getItemMeta();
+        final PotionData data = meta.getBasePotionData();
+        return data.getType();
+    }
+
+    @Override
+    public void setBasePotionType(final ItemStack stack, final PotionType type, final boolean extended, final boolean upgraded) {
+        if (stack == null) {
+            throw new IllegalArgumentException("ItemStack cannot be null");
+        }
+
+        if (extended && upgraded) {
+            throw new IllegalArgumentException("Potion cannot be both extended and upgraded");
+        }
+
+        final PotionData data = new PotionData(type, extended, upgraded);
+        final PotionMeta meta = (PotionMeta) stack.getItemMeta();
+        meta.setBasePotionData(data);
+        stack.setItemMeta(meta);
     }
 
     @Override

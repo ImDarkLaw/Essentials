@@ -250,7 +250,7 @@ public class MetaItemStack {
             meta.setTitle(title);
             stack.setItemMeta(meta);
         } else if (split.length > 1 && split[0].startsWith("page") && split[0].length() > 4 && MaterialUtil.isEditableBook(stack.getType()) && hasMetaPermission(sender, "page", false, true, ess)) {
-            final int page = NumberUtil.isInt(split[0].substring(4)) ? (Integer.parseInt(split[0].substring(4)) - 1) : 0;
+            final int page = NumberUtil.isInt(split[0].substring(4)) ? Integer.parseInt(split[0].substring(4)) - 1 : 0;
             final BookMeta meta = (BookMeta) stack.getItemMeta();
             final List<String> pages = meta.hasPages() ? new ArrayList<>(meta.getPages()) : new ArrayList<>();
             final List<String> lines = new ArrayList<>();
@@ -353,7 +353,7 @@ public class MetaItemStack {
             return;
         }
 
-        if (split[0].equalsIgnoreCase("color") || split[0].equalsIgnoreCase("colour") || (allowShortName && split[0].equalsIgnoreCase("c"))) {
+        if (split[0].equalsIgnoreCase("color") || split[0].equalsIgnoreCase("colour") || allowShortName && split[0].equalsIgnoreCase("c")) {
             final List<Color> primaryColors = new ArrayList<>();
             final String[] colors = split[1].split(",");
             for (final String color : colors) {
@@ -368,7 +368,7 @@ public class MetaItemStack {
                 }
             }
             builder.withColor(primaryColors);
-        } else if (split[0].equalsIgnoreCase("shape") || split[0].equalsIgnoreCase("type") || (allowShortName && (split[0].equalsIgnoreCase("s") || split[0].equalsIgnoreCase("t")))) {
+        } else if (split[0].equalsIgnoreCase("shape") || split[0].equalsIgnoreCase("type") || allowShortName && (split[0].equalsIgnoreCase("s") || split[0].equalsIgnoreCase("t"))) {
             FireworkEffect.Type finalEffect = null;
             split[1] = split[1].equalsIgnoreCase("large") ? "BALL_LARGE" : split[1];
             if (fireworkShape.containsKey(split[1].toUpperCase())) {
@@ -379,7 +379,7 @@ public class MetaItemStack {
             if (finalEffect != null) {
                 builder.with(finalEffect);
             }
-        } else if (split[0].equalsIgnoreCase("fade") || (allowShortName && split[0].equalsIgnoreCase("f"))) {
+        } else if (split[0].equalsIgnoreCase("fade") || allowShortName && split[0].equalsIgnoreCase("f")) {
             final List<Color> fadeColors = new ArrayList<>();
             final String[] colors = split[1].split(",");
             for (final String color : colors) {
@@ -394,7 +394,7 @@ public class MetaItemStack {
             if (!fadeColors.isEmpty()) {
                 builder.withFade(fadeColors);
             }
-        } else if (split[0].equalsIgnoreCase("effect") || (allowShortName && split[0].equalsIgnoreCase("e"))) {
+        } else if (split[0].equalsIgnoreCase("effect") || allowShortName && split[0].equalsIgnoreCase("e")) {
             final String[] effects = split[1].split(",");
             for (final String effect : effects) {
                 if (effect.equalsIgnoreCase("twinkle")) {
@@ -415,7 +415,7 @@ public class MetaItemStack {
                 return;
             }
 
-            if (split[0].equalsIgnoreCase("color") || split[0].equalsIgnoreCase("colour") || (allowShortName && split[0].equalsIgnoreCase("c"))) {
+            if (split[0].equalsIgnoreCase("color") || split[0].equalsIgnoreCase("colour") || allowShortName && split[0].equalsIgnoreCase("c")) {
                 if (validFirework) {
                     if (!hasMetaPermission(sender, "firework", true, true, ess)) {
                         throw new TranslatableException("noMetaFirework");
@@ -444,7 +444,7 @@ public class MetaItemStack {
                     }
                 }
                 builder.withColor(primaryColors);
-            } else if (split[0].equalsIgnoreCase("shape") || split[0].equalsIgnoreCase("type") || (allowShortName && (split[0].equalsIgnoreCase("s") || split[0].equalsIgnoreCase("t")))) {
+            } else if (split[0].equalsIgnoreCase("shape") || split[0].equalsIgnoreCase("type") || allowShortName && (split[0].equalsIgnoreCase("s") || split[0].equalsIgnoreCase("t"))) {
                 FireworkEffect.Type finalEffect = null;
                 split[1] = split[1].equalsIgnoreCase("large") ? "BALL_LARGE" : split[1];
                 if (fireworkShape.containsKey(split[1].toUpperCase())) {
@@ -455,7 +455,7 @@ public class MetaItemStack {
                 if (finalEffect != null) {
                     builder.with(finalEffect);
                 }
-            } else if (split[0].equalsIgnoreCase("fade") || (allowShortName && split[0].equalsIgnoreCase("f"))) {
+            } else if (split[0].equalsIgnoreCase("fade") || allowShortName && split[0].equalsIgnoreCase("f")) {
                 final List<Color> fadeColors = new ArrayList<>();
                 final String[] colors = split[1].split(",");
                 for (final String color : colors) {
@@ -470,7 +470,7 @@ public class MetaItemStack {
                 if (!fadeColors.isEmpty()) {
                     builder.withFade(fadeColors);
                 }
-            } else if (split[0].equalsIgnoreCase("effect") || (allowShortName && split[0].equalsIgnoreCase("e"))) {
+            } else if (split[0].equalsIgnoreCase("effect") || allowShortName && split[0].equalsIgnoreCase("e")) {
                 final String[] effects = split[1].split(",");
                 for (final String effect : effects) {
                     if (effect.equalsIgnoreCase("twinkle")) {
@@ -493,7 +493,7 @@ public class MetaItemStack {
                 return;
             }
 
-            if (split[0].equalsIgnoreCase("effect") || (allowShortName && split[0].equalsIgnoreCase("e"))) {
+            if (split[0].equalsIgnoreCase("effect") || allowShortName && split[0].equalsIgnoreCase("e")) {
                 pEffectType = Potions.getByName(split[1]);
                 if (pEffectType != null && pEffectType.getName() != null) {
                     if (hasMetaPermission(sender, "potions." + pEffectType.getName().toLowerCase(Locale.ENGLISH), true, false, ess)) {
@@ -504,7 +504,7 @@ public class MetaItemStack {
                 } else {
                     throw new TranslatableException("invalidPotionMeta", split[1]);
                 }
-            } else if (split[0].equalsIgnoreCase("power") || (allowShortName && split[0].equalsIgnoreCase("p"))) {
+            } else if (split[0].equalsIgnoreCase("power") || allowShortName && split[0].equalsIgnoreCase("p")) {
                 if (NumberUtil.isInt(split[1])) {
                     validPotionPower = true;
                     power = Integer.parseInt(split[1]);
@@ -514,21 +514,21 @@ public class MetaItemStack {
                 } else {
                     throw new TranslatableException("invalidPotionMeta", split[1]);
                 }
-            } else if (split[0].equalsIgnoreCase("amplifier") || (allowShortName && split[0].equalsIgnoreCase("a"))) {
+            } else if (split[0].equalsIgnoreCase("amplifier") || allowShortName && split[0].equalsIgnoreCase("a")) {
                 if (NumberUtil.isInt(split[1])) {
                     validPotionPower = true;
                     power = Integer.parseInt(split[1]);
                 } else {
                     throw new TranslatableException("invalidPotionMeta", split[1]);
                 }
-            } else if (split[0].equalsIgnoreCase("duration") || (allowShortName && split[0].equalsIgnoreCase("d"))) {
+            } else if (split[0].equalsIgnoreCase("duration") || allowShortName && split[0].equalsIgnoreCase("d")) {
                 if (NumberUtil.isInt(split[1])) {
                     validPotionDuration = true;
                     duration = Integer.parseInt(split[1]) * 20; //Duration is in ticks by default, converted to seconds
                 } else {
                     throw new TranslatableException("invalidPotionMeta", split[1]);
                 }
-            } else if (split[0].equalsIgnoreCase("splash") || (allowShortName && split[0].equalsIgnoreCase("s"))) {
+            } else if (split[0].equalsIgnoreCase("splash") || allowShortName && split[0].equalsIgnoreCase("s")) {
                 isSplashPotion = Boolean.parseBoolean(split[1]);
             }
 
@@ -540,19 +540,7 @@ public class MetaItemStack {
                 }
                 pmeta.addCustomEffect(pEffect, true);
                 stack.setItemMeta(pmeta);
-                if (VersionUtil.getServerBukkitVersion().isHigherThanOrEqualTo(VersionUtil.v1_9_R01)) {
-                    if (isSplashPotion && stack.getType() == Material.POTION) {
-                        stack.setType(Material.SPLASH_POTION);
-                    } else if (!isSplashPotion && stack.getType() == Material.SPLASH_POTION) {
-                        stack.setType(Material.POTION);
-                    }
-                } else {
-                    /* todo figure out how to unfuck this code
-                    final Potion potion = Potion.fromDamage(stack.getDurability());
-                    potion.setSplash(isSplashPotion);
-                    potion.apply(stack);
-                     */
-                }
+                ess.getPotionMetaProvider().setSplashPotion(stack, isSplashPotion);
                 resetPotionMeta();
             }
         }
@@ -573,7 +561,7 @@ public class MetaItemStack {
                 }
             }
 
-            if (level < 0 || (!allowUnsafe && level > enchantment.getMaxLevel())) {
+            if (level < 0 || !allowUnsafe && level > enchantment.getMaxLevel()) {
                 level = enchantment.getMaxLevel();
             }
             addEnchantment(sender, allowUnsafe, enchantment, level);
@@ -634,6 +622,7 @@ public class MetaItemStack {
 
             PatternType patternType = null;
             try {
+                //noinspection removal
                 patternType = PatternType.getByIdentifier(split[0]);
             } catch (final Exception ignored) {
             }
@@ -643,6 +632,7 @@ public class MetaItemStack {
                 final Color color = Color.fromRGB(Integer.parseInt(split[1]));
                 ess.getBannerDataProvider().setBaseColor(stack, DyeColor.getByColor(color));
             } else if (patternType != null) {
+                //noinspection removal
                 final PatternType type = PatternType.getByIdentifier(split[0]);
                 final DyeColor color = DyeColor.getByColor(Color.fromRGB(Integer.parseInt(split[1])));
                 final org.bukkit.block.banner.Pattern pattern = new org.bukkit.block.banner.Pattern(color, type);
@@ -659,6 +649,7 @@ public class MetaItemStack {
 
             PatternType patternType = null;
             try {
+                //noinspection removal
                 patternType = PatternType.getByIdentifier(split[0]);
             } catch (final Exception ignored) {
             }

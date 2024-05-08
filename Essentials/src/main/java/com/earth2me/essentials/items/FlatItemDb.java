@@ -20,7 +20,6 @@ import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -131,13 +130,12 @@ public class FlatItemDb extends AbstractItemDb {
         stack.setAmount(material.getMaxStackSize());
 
         final ItemData.EssentialPotionData potionData = data.getPotionData();
-        final ItemMeta meta = stack.getItemMeta();
 
-        if (potionData != null && meta instanceof PotionMeta) {
-            final PotionMeta potionMeta = (PotionMeta) meta;
-            potionMeta.setBasePotionType(potionData.getType());
-            //todo figure out what to do here potionMeta.setBasePotionType(potionData);
+        if (potionData != null && stack.getItemMeta() instanceof PotionMeta) {
+            ess.getPotionMetaProvider().setBasePotionType(stack, potionData.getType(), potionData.isExtended(), potionData.isUpgraded());
         }
+
+        final ItemMeta meta = stack.getItemMeta();
 
         // For some reason, Damageable doesn't extend ItemMeta but CB implements them in the same
         // class. As to why, your guess is as good as mine.
@@ -204,14 +202,14 @@ public class FlatItemDb extends AbstractItemDb {
         throw new UnsupportedOperationException("Legacy IDs aren't supported on this version.");
     }
 
-    private ItemData lookup(final ItemStack item) {
-        final Material type = item.getType();
+    private ItemData lookup(final ItemStack is) {
+        final Material type = is.getType();
 
-        if (MaterialUtil.isPotion(type) && item.getItemMeta() instanceof PotionMeta) {
-            final PotionMetaProvider.AbstractPotionData potion = ess.getPotionMetaProvider().getPotionData(item);
-            return new ItemData(type, new ItemData.EssentialPotionData(potion.getType(), potion.isUpgraded(), potion.isExtended();
+        if (MaterialUtil.isPotion(type) && is.getItemMeta() instanceof PotionMeta) {
+            final PotionMetaProvider provider = ess.getPotionMetaProvider();
+            return new ItemData(type, new ItemData.EssentialPotionData(provider.getBasePotionType(is), provider.isUpgraded(is), provider.isExtended(is)));
         } else if (type.toString().contains("SPAWNER")) {
-            final EntityType entity = ess.getSpawnerItemProvider().getEntityType(item);
+            final EntityType entity = ess.getSpawnerItemProvider().getEntityType(is);
             return new ItemData(type, entity);
         } else {
             return new ItemData(type);
